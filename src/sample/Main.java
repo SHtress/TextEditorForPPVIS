@@ -32,21 +32,21 @@ public class Main extends Application {
         final ArrayList<Symbol> document=new ArrayList<Symbol>();
         caret karetka= new caret();
 
-
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 Canvas canvas = new Canvas(400,500);
                 GraphicsContext gr=canvas.getGraphicsContext2D();
-
                 String key = event.getCode().toString();
                 if(key.equals(KeyCode.BACK_SPACE.toString()) && document.size()>0){
-                    document.remove(document.size()-1);
+                    document.remove(karetka.positionColumn-2);
+                    if(karetka.positionColumn>1)karetka.positionColumn--;
+                    //if(karetka.positionColumn>document.size()) karetka.positionColumn=document.size()+1;
                 }
 
                 if(key.equals(KeyCode.ENTER.toString())) document.add(new Symbol("\n"));
-                if(key.equals(KeyCode.RIGHT.toString())) if(karetka.positionColumn*7<=393) karetka.positionColumn++;
-                if(key.equals(KeyCode.LEFT.toString())) if(karetka.positionColumn>0)karetka.positionColumn--;
+                if(key.equals(KeyCode.RIGHT.toString())) if(karetka.positionColumn*7<=393 && karetka.positionColumn<=document.size()) karetka.positionColumn++;
+                if(key.equals(KeyCode.LEFT.toString())) if(karetka.positionColumn>1)karetka.positionColumn--;
                 //System.out.println(key);
 
                 int j=0,k=1;
@@ -84,7 +84,8 @@ public class Main extends Application {
                 String key = event.getCharacter() ;
                 if(!key.toString().equals("\b")) {
                     Symbol KeySymbol=new Symbol(key.toString());
-                    document.add(karetka.positionColumn,KeySymbol);
+                    document.add(karetka.positionColumn-1,KeySymbol);
+                    karetka.positionColumn++;
                 }
                 //for(int i=0;i<10000;i++){}
                 int j=0,k=1;
