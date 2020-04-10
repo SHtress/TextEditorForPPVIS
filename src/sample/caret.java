@@ -6,6 +6,6 @@ public class caret {
 
     caret(){
         positionColumn=1;
-        positionRow=0;
+        positionRow=1;
     }
 }
