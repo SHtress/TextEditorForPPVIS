@@ -39,27 +39,32 @@ public class Main extends Application {
                 GraphicsContext gr=canvas.getGraphicsContext2D();
                 String key = event.getCode().toString();
                 if(key.equals(KeyCode.BACK_SPACE.toString()) && document.size()>0){
-                    document.remove(karetka.positionColumn-2+(karetka.positionRow-1)*400/7);
+                    document.remove(karetka.positionColumn-2+(karetka.positionRow-1)*56);
                     if(karetka.positionColumn>1 ) karetka.positionColumn--; else {
-                        if(karetka.positionRow>1) karetka.positionRow--; karetka.positionColumn=400/7+1;
+                        if(karetka.positionRow>1) karetka.positionRow--; karetka.positionColumn=56;
                     }
                     System.out.println(karetka.positionColumn);
-                    //if(karetka.positionColumn>document.size()) karetka.positionColumn=document.size()+1;
                 }
 
-                if(key.equals(KeyCode.ENTER.toString())) document.add(new Symbol("\n"));
-                if(key.equals(KeyCode.RIGHT.toString())) if(karetka.positionColumn*7<=393 && karetka.positionColumn<=document.size()) karetka.positionColumn++;
+//                if(key.equals(KeyCode.ENTER.toString())) {
+//                    for(int j=karetka.positionColumn; (j-1)*7<393;j++) {
+//                        document.add(new Symbol(" "));
+//                    }
+//                    karetka.positionColumn = 0;
+//                    karetka.positionRow++;
+//                }
+
+                if(key.equals(KeyCode.RIGHT.toString())) if(karetka.positionColumn*7<=393 && karetka.positionColumn<=document.size()%56) karetka.positionColumn++;
                 if(key.equals(KeyCode.LEFT.toString())) if(karetka.positionColumn>1)karetka.positionColumn--;
                 if(key.equals(KeyCode.UP.toString())) if(karetka.positionRow*10>10) karetka.positionRow--;
-                if(key.equals(KeyCode.DOWN.toString())) {if(karetka.positionRow<=document.size()*7/393) karetka.positionRow++;
-                System.out.println(document.size()/400);}
+                if(key.equals(KeyCode.DOWN.toString())) {if(karetka.positionRow<=document.size()*7/393) karetka.positionRow++; }
 
                 //System.out.println(key);
 
                 int j=0,k=1;
                 for(int i=0;i<document.size();i++,k++) {
                     gr.setFont(document.get(i).SymbolFont);
-                    if(document.get(i).SymbolToRepresent.equals("\n") || k*7>=393) {j++;  k=-1; }
+                    if(document.get(i).SymbolToRepresent.equals("\n") || k*7>=393) {j++;  k=-1; ;}
                     gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
                 }
 
@@ -92,15 +97,15 @@ public class Main extends Application {
                 String key = event.getCharacter() ;
                 if(!key.toString().equals("\b")) {
                     Symbol KeySymbol=new Symbol(key.toString());
-                    document.add(karetka.positionColumn-1+(karetka.positionRow-1)*400/7,KeySymbol);
-                    if(karetka.positionColumn*7<393) karetka.positionColumn++;
-                    else {karetka.positionColumn=0; karetka.positionRow++;  }
+                    document.add(karetka.positionColumn-1+(karetka.positionRow-1)*56,KeySymbol);
+                    if(karetka.positionColumn<56) karetka.positionColumn++;
+                    else {karetka.positionColumn=1; karetka.positionRow++;  }
                 }
                 //for(int i=0;i<10000;i++){}
                 int j=0,k=1;
                 for(int i=0;i<document.size();i++,k++) {
                         gr.setFont(document.get(i).SymbolFont);
-                        if(document.get(i).SymbolToRepresent.equals("\n") || k*7>=393) {j++;  k=-1; }
+                        if(document.get(i).SymbolToRepresent.equals("\n") || k*7>=393) {j++;  k=1; }
                         gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
                     }
                 gr.fillText("_",karetka.positionColumn*7,karetka.positionRow*10);
