@@ -22,10 +22,9 @@ public class Symbol{
         SymbolToRepresent=Symbol;
         SymbolFont=FontName;
     }
-
     Symbol(String Symbol){
         SymbolToRepresent=Symbol;
-        SymbolFont=new Font("OldStyle", 12);
+        SymbolFont=new Font("Cambria", 12);
     }
 
     public Font getCurrentFont(){
