@@ -19,6 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.canvas.*;
 
+import javax.print.Doc;
 import java.awt.*;
 import java.security.Key;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class Main extends Application {
 
                 if(key.equals(KeyCode.ENTER.toString())) {
                     for(int j = karetka.positionColumn; j<56; j++) {
-                        document.add(new Symbol(" "));
+                        document.add(karetka.positionColumn-1+(karetka.positionRow-1)*56,new Symbol("\n"));
                     }
                     karetka.positionColumn = 0;
                     karetka.positionRow++;
@@ -66,7 +67,8 @@ public class Main extends Application {
                 int j=0,k=1;
                 for(int i=0;i<document.size();i++,k++) {
                     gr.setFont(document.get(i).SymbolFont);
-                    if( k*7>=393) {j++;  k=1; ;}
+                    if( k*7>=393) {if(document.get(i).SymbolToRepresent.equals("\n") && i==karetka.positionRow*56) document.remove(i);
+                    j++;  k=1; ;}
                     gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
                 }
 
@@ -102,11 +104,13 @@ public class Main extends Application {
                     if(karetka.positionColumn<56) karetka.positionColumn++;
                     else {karetka.positionColumn=1; karetka.positionRow++;  }
                 }
+
                 //for(int i=0;i<10000;i++){}
                 int j=0,k=1;
                 for(int i=0;i<document.size();i++,k++) {
                         gr.setFont(document.get(i).SymbolFont);
-                        if( k*7>=393) {j++;  k=1; }
+                        if( k*7>=393) { if(document.get(i-1).SymbolToRepresent.equals("\n") && i==karetka.positionRow*56) document.remove(i);
+                            j++;  k=1; }
                         gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
                     }
                 gr.fillText("_",karetka.positionColumn*7,karetka.positionRow*10);
@@ -131,12 +135,12 @@ public class Main extends Application {
 
         Canvas canvas = new Canvas(400,500);
         GraphicsContext gr=canvas.getGraphicsContext2D();
-        int j=0,k=1;
-        for(int i=0;i<document.size();i++,k++) {
-            gr.setFont(document.get(i).SymbolFont);
-            if(document.get(i).SymbolToRepresent.equals("\n")) {j++; k=-1; }
-            gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
-        }
+//        int j=0,k=1;
+//        for(int i=0;i<document.size();i++,k++) {
+//            gr.setFont(document.get(i).SymbolFont);
+//            if(document.get(i).SymbolToRepresent.equals("\n")) {j++; k=-1; }
+//            gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
+//        }
 
         StackPane textpane = new StackPane(canvas);
 
