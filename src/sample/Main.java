@@ -60,7 +60,7 @@ public class Main extends Application {
                 else if(karetka.positionRow>document.size()/56 && karetka.positionColumn<=document.size()%56) karetka.positionColumn++;
                 if(key.equals(KeyCode.LEFT.toString())) if(karetka.positionColumn>1)karetka.positionColumn--;
                 if(key.equals(KeyCode.UP.toString())) if(karetka.positionRow>1) karetka.positionRow--;
-                if(key.equals(KeyCode.DOWN.toString())) {if(karetka.positionRow<=document.size()*7/393) karetka.positionRow++; }
+                if(key.equals(KeyCode.DOWN.toString())) {if(karetka.positionRow<=document.size()/56 && karetka.positionColumn<=document.size()%56+1) karetka.positionRow++; }
 
                 //System.out.println(key);
 
