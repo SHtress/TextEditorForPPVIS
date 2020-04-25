@@ -61,15 +61,15 @@ public class Main extends Application {
                 else if(karetka.positionRow>document.size()/56 && karetka.positionColumn<=document.size()%56) karetka.positionColumn++;
                 if(key.equals(KeyCode.LEFT.toString())) if(karetka.positionColumn>1)karetka.positionColumn--;
                 if(key.equals(KeyCode.UP.toString())) if(karetka.positionRow>1) karetka.positionRow--;
-                if(key.equals(KeyCode.DOWN.toString())) {if(karetka.positionRow<=document.size()/56 && karetka.positionColumn<=document.size()%56+1) karetka.positionRow++; }
+                if(key.equals(KeyCode.DOWN.toString())) {if(karetka.positionRow<=document.size()/56 && document.size()>=karetka.positionColumn+ karetka.positionRow*56-1) karetka.positionRow++; }
 
                 //System.out.println(key);
                 int j=0,k=1;
                 for(int i=0;i<document.size();i++,k++) {
                     gr.setFont(document.get(i).SymbolFont);
                     if( k*7>=393) {
-                       if(document.get(i-3).SymbolToRepresent.equals("\n") && key.equals(KeyCode.BACK_SPACE.toString()) ){
-                        document.add(i-2,new Symbol("\n"));
+                       if(document.get(i-3).SymbolToRepresent.equals("\n") && key.equals(KeyCode.BACK_SPACE.toString()) && i==karetka.positionRow*56 ){
+                        document.add(i-3,new Symbol("\n"));
                        // System.out.println("GOOF");
                         }
                     j++;  k=1; ;}
