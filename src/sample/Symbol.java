@@ -22,6 +22,7 @@ public class Symbol{
         SymbolToRepresent=Symbol;
         SymbolFont=FontName;
     }
+
     Symbol(String Symbol){
         SymbolToRepresent=Symbol;
         SymbolFont=new Font("Cambria", 12);

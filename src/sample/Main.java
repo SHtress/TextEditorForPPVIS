@@ -4,8 +4,11 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
+import javafx.scene.control.ComboBox;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.collections.FXCollections;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,18 +38,32 @@ public class Main extends Application {
         final ArrayList<Symbol> document=new ArrayList<Symbol>();
         caret karetka= new caret();
 
+        ObservableList<String> FontFamilies = FXCollections.observableArrayList("Java", "JavaScript", "C#", "Python");
+        ComboBox<String> FontComboBox = new ComboBox<String>(FontFamilies);
+        FontComboBox.setLayoutX(500);
+        FontComboBox.setLayoutY(50);
+        FontComboBox.setValue("Java");
+
+        FontComboBox.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+               FontComboBox.setFocusTraversable(false);
+            }
+    });
+
+
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 Canvas canvas = new Canvas(410,800);
                 GraphicsContext gr=canvas.getGraphicsContext2D();
                 String key = event.getCode().toString();
-                if(key.equals(KeyCode.BACK_SPACE.toString()) && document.size()>0 && karetka.positionColumn!=1){
+                if(key.equals(KeyCode.BACK_SPACE.toString()) && document.size()>0 && !(karetka.positionRow==1 && karetka.positionColumn==1)){
                     document.remove(karetka.positionColumn-2+(karetka.positionRow-1)*56);
                     if(karetka.positionColumn>1 ) karetka.positionColumn--; else {
                         if(karetka.positionRow>1) karetka.positionRow--; karetka.positionColumn=56;
                     }
-                    //System.out.println(karetka.positionColumn);
+
                 }
 
                 if(key.equals(KeyCode.ENTER.toString())) {
@@ -68,9 +85,11 @@ public class Main extends Application {
                 for(int i=0;i<document.size();i++,k++) {
                     gr.setFont(document.get(i).SymbolFont);
                     if( k*7>=393) {
-                       if(document.get(i-3).SymbolToRepresent.equals("\n") && key.equals(KeyCode.BACK_SPACE.toString()) && i==karetka.positionRow*56 ){
-                        document.add(i-3,new Symbol("\n"));
-                       // System.out.println("GOOF");
+                       if(document.get(i-3).SymbolToRepresent.equals("\n") && key.equals(KeyCode.BACK_SPACE.toString()) && i==karetka.positionRow*56 && karetka.positionColumn!=1 ){
+                        document.add(i-2,new Symbol("\n"));
+                        }
+                        if(document.get(i-3).SymbolToRepresent.equals("\n") && key.equals(KeyCode.BACK_SPACE.toString()) && i==karetka.positionRow*56 && karetka.positionColumn==55 ) {
+                            document.remove(i-3);
                         }
                     j++;  k=1; ;}
                     gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
@@ -79,11 +98,12 @@ public class Main extends Application {
                 gr.fillText("_",karetka.positionColumn*7,karetka.positionRow*10);
 
                 ScrollPane scrollPane = new ScrollPane(canvas);
+                scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
                 scrollPane.setPrefViewportHeight(500);
                 scrollPane.setPrefViewportWidth(410);
                 scrollPane.setPannable(false);
                 scrollPane.setVvalue((karetka.positionRow-1)*0.02);
-                scrollPane.setHvalue(0);
+
 
                 StackPane textpane = new StackPane(scrollPane);
 
@@ -91,7 +111,7 @@ public class Main extends Application {
                 textpane.setLayoutY(25);
 
                 textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-                Group group =new Group(textpane);
+                Group group =new Group(textpane,FontComboBox);
                 Scene scene = new Scene(group);
                 primaryStage.setScene(scene);
 
@@ -113,7 +133,6 @@ public class Main extends Application {
                     else {karetka.positionColumn=1; karetka.positionRow++;  }
                 }
 
-                //for(int i=0;i<10000;i++){}
                 int j=0,k=1;
                 for(int i=0;i<document.size();i++,k++) {
                         gr.setFont(document.get(i).SymbolFont);
@@ -124,11 +143,12 @@ public class Main extends Application {
                 gr.fillText("_",karetka.positionColumn*7,karetka.positionRow*10);
 
                 ScrollPane scrollPane = new ScrollPane(canvas);
+                scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
                 scrollPane.setPrefViewportHeight(500);
                 scrollPane.setPrefViewportWidth(410);
                 scrollPane.setPannable(false);
                 scrollPane.setVvalue((karetka.positionRow-1)*0.02);
-                scrollPane.setHvalue(0);
+
 
                 StackPane textpane = new StackPane(scrollPane);
                // StackPane textpane = new StackPane(canvas);
@@ -140,13 +160,12 @@ public class Main extends Application {
                 textpane.setLayoutY(25);
 
                 textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-                Group group =new Group(textpane);
+                Group group =new Group(textpane,FontComboBox);
                 Scene scene = new Scene(group);
                 primaryStage.setScene(scene);
 
             }
         });
-
 
 
         Canvas canvas = new Canvas(410,800);
@@ -159,18 +178,19 @@ public class Main extends Application {
 //        }
 
         ScrollPane scrollPane = new ScrollPane(canvas);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setPrefViewportHeight(500);
         scrollPane.setPrefViewportWidth(410);
         scrollPane.setPannable(false);
         scrollPane.setVvalue(0.0);
-        scrollPane.setHvalue(0.0);
+
 
         StackPane textpane = new StackPane(scrollPane);
         textpane.setLayoutX(50);
         textpane.setLayoutY(25);
 
         textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-        Group group =new Group(textpane);
+        Group group =new Group(textpane,FontComboBox);
         Scene scene = new Scene(group);
         primaryStage.setScene(scene);
         primaryStage.setWidth(800);
