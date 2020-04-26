@@ -1,6 +1,8 @@
 package sample;
 
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 public class Symbol{
     String SymbolToRepresent;
@@ -18,14 +20,21 @@ public class Symbol{
         FontSize=NewSize;
     }
 
-    Symbol(String Symbol, Font FontName){
+//    Symbol(String Symbol, Font FontName){
+//        SymbolToRepresent=Symbol;
+//        SymbolFont=FontName;
+//    }
+
+    Symbol(String Symbol,Font NewFont){
         SymbolToRepresent=Symbol;
-        SymbolFont=FontName;
+        SymbolFont=NewFont;
+//        SymbolFont=Font.font(FontFamilyName,FontWeight.BOLD, FontPosture.REGULAR,12);
+
     }
 
     Symbol(String Symbol){
         SymbolToRepresent=Symbol;
-        SymbolFont=new Font("Cambria", 12);
+        SymbolFont=new Font("Cambria",12);
     }
 
     public Font getCurrentFont(){

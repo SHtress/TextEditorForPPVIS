@@ -13,12 +13,16 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.canvas.*;
@@ -37,12 +41,16 @@ public class Main extends Application {
 
         final ArrayList<Symbol> document=new ArrayList<Symbol>();
         caret karetka= new caret();
+        Label FontFamilyLabel=new Label("Шрифт:");
+        FontFamilyLabel.setLayoutX(500);
+        FontFamilyLabel.setLayoutY(55);
 
-        ObservableList<String> FontFamilies = FXCollections.observableArrayList("Java", "JavaScript", "C#", "Python");
+        ObservableList<String> FontFamilies = FXCollections.observableArrayList("Cambria", "TimesRoman", "Arial", "Comic Sans MS","Trebuchet MS");
         ComboBox<String> FontComboBox = new ComboBox<String>(FontFamilies);
-        FontComboBox.setLayoutX(500);
+        FontComboBox.setLayoutX(550);
         FontComboBox.setLayoutY(50);
-        FontComboBox.setValue("Java");
+        FontComboBox.setValue("TimesRoman");
+
 
         FontComboBox.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
             @Override
@@ -50,6 +58,12 @@ public class Main extends Application {
                FontComboBox.setFocusTraversable(false);
             }
     });
+        FontComboBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                FontComboBox.setFocusTraversable(true);
+            }
+        });
 
 
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -111,7 +125,7 @@ public class Main extends Application {
                 textpane.setLayoutY(25);
 
                 textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-                Group group =new Group(textpane,FontComboBox);
+                Group group =new Group(textpane,FontComboBox,FontFamilyLabel);
                 Scene scene = new Scene(group);
                 primaryStage.setScene(scene);
 
@@ -124,10 +138,13 @@ public class Main extends Application {
             public void handle(KeyEvent event) {
                 Canvas canvas = new Canvas(410,800);
                 GraphicsContext gr=canvas.getGraphicsContext2D();
+                Font CurrentFont=new Font(FontComboBox.getValue(),12);
+
+                CurrentFont.font(FontComboBox.getValue(),FontWeight.BOLD, FontPosture.REGULAR,12);
 
                 String key = event.getCharacter() ;
                 if(!key.toString().equals("\b")) {
-                    Symbol KeySymbol=new Symbol(key.toString());
+                    Symbol KeySymbol=new Symbol(key.toString(),CurrentFont);
                     document.add(karetka.positionColumn-1+(karetka.positionRow-1)*56,KeySymbol);
                     if(karetka.positionColumn<56) karetka.positionColumn++;
                     else {karetka.positionColumn=1; karetka.positionRow++;  }
@@ -136,6 +153,7 @@ public class Main extends Application {
                 int j=0,k=1;
                 for(int i=0;i<document.size();i++,k++) {
                         gr.setFont(document.get(i).SymbolFont);
+
                         if( k*7>=393) { if(document.get(i-1).SymbolToRepresent.equals("\n") && i==karetka.positionRow*56 && !key.toString().equals("\b")) document.remove(i);
                             j++;  k=1; }
                         gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
@@ -160,7 +178,7 @@ public class Main extends Application {
                 textpane.setLayoutY(25);
 
                 textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-                Group group =new Group(textpane,FontComboBox);
+                Group group =new Group(textpane,FontComboBox,FontFamilyLabel);
                 Scene scene = new Scene(group);
                 primaryStage.setScene(scene);
 
@@ -190,7 +208,7 @@ public class Main extends Application {
         textpane.setLayoutY(25);
 
         textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-        Group group =new Group(textpane,FontComboBox);
+        Group group =new Group(textpane,FontComboBox,FontFamilyLabel);
         Scene scene = new Scene(group);
         primaryStage.setScene(scene);
         primaryStage.setWidth(800);
