@@ -2,15 +2,10 @@ package sample;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
 import javafx.scene.control.ComboBox;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
-import javafx.scene.Group;
-import javafx.scene.Parent;
+import javafx.scene.Group;;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
@@ -20,16 +15,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.canvas.*;
-
-import javax.print.Doc;
-import java.awt.*;
-import java.security.Key;
 import java.util.ArrayList;
 
 
@@ -41,23 +33,41 @@ public class Main extends Application {
 
         final ArrayList<Symbol> document=new ArrayList<Symbol>();
         caret karetka= new caret();
+        Buffer buffer=new Buffer();
+
+
+        ToggleButton Boldbutton = new ToggleButton("Жирный");
+        Boldbutton.setLayoutX(500);
+        Boldbutton.setLayoutY(80);
+
+        ToggleButton ItalicButton = new ToggleButton("Курсив");
+        ItalicButton.setLayoutX(570);
+        ItalicButton.setLayoutY(80);
+
         Label FontFamilyLabel=new Label("Шрифт:");
         FontFamilyLabel.setLayoutX(500);
         FontFamilyLabel.setLayoutY(55);
+
 
         ObservableList<String> FontFamilies = FXCollections.observableArrayList("Cambria", "TimesRoman", "Arial", "Comic Sans MS","Trebuchet MS");
         ComboBox<String> FontComboBox = new ComboBox<String>(FontFamilies);
         FontComboBox.setLayoutX(550);
         FontComboBox.setLayoutY(50);
-        FontComboBox.setValue("TimesRoman");
+        FontComboBox.setValue("Cambria");
 
+        ObservableList<Double> FontSizes = FXCollections.observableArrayList(8.0,10.0,12.0,14.0);
+        ComboBox<Double> FontSizeComboBox = new ComboBox<Double>(FontSizes);
+        FontSizeComboBox.setLayoutX(690);
+        FontSizeComboBox.setLayoutY(50);
+        FontSizeComboBox.setValue(12.0);
 
+//----------------------------------------------------------------------------------------------------------------------
         FontComboBox.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                FontComboBox.setFocusTraversable(false);
             }
-    });
+        });
         FontComboBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -65,7 +75,54 @@ public class Main extends Application {
             }
         });
 
+//----------------------------------------------------------------------------------------------------------------------
+        FontSizeComboBox.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                FontSizeComboBox.setFocusTraversable(false);
+            }
+        });
+        FontSizeComboBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                FontSizeComboBox.setFocusTraversable(true);
+            }
+        });
 
+//----------------------------------------------------------------------------------------------------------------------
+        Boldbutton.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+               Boldbutton.setFocusTraversable(false);
+            }
+        });
+        FontSizeComboBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+               Boldbutton.setFocusTraversable(true);
+            }
+        });
+
+//----------------------------------------------------------------------------------------------------------------------
+        ItalicButton.addEventFilter(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                ItalicButton.setFocusTraversable(false);
+            }
+        });
+        ItalicButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+               ItalicButton.setFocusTraversable(true);
+            }
+        });
+
+//----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+// ----------------------------------------------------------------------------------------------------------------------
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -88,11 +145,21 @@ public class Main extends Application {
                     karetka.positionRow++;
                 }
 
+                if(key.equals(KeyCode.CONTROL.toString())) buffer.StartPosition=(karetka.positionRow-1)*56+karetka.positionColumn-1;
+
+
+            //    for(int i=0;i<buffer.size();i++) System.out.println(buffer.get(i).SymbolToRepresent);
+
                 if(key.equals(KeyCode.RIGHT.toString())) if(karetka.positionColumn<56 && karetka.positionRow<=document.size()/56 ) karetka.positionColumn++;
                 else if(karetka.positionRow>document.size()/56 && karetka.positionColumn<=document.size()%56) karetka.positionColumn++;
-                if(key.equals(KeyCode.LEFT.toString())) if(karetka.positionColumn>1)karetka.positionColumn--;
+                else if(karetka.positionColumn==56 && karetka.positionRow<=document.size()/56) {karetka.positionRow++; karetka.positionColumn=1;}
+                if(key.equals(KeyCode.LEFT.toString())) if(karetka.positionColumn>1) karetka.positionColumn--; else
+                    if(karetka.positionColumn==1 && karetka.positionRow>1) {karetka.positionRow--; karetka.positionColumn=56; }
                 if(key.equals(KeyCode.UP.toString())) if(karetka.positionRow>1) karetka.positionRow--;
                 if(key.equals(KeyCode.DOWN.toString())) {if(karetka.positionRow<=document.size()/56 && document.size()>=karetka.positionColumn+ karetka.positionRow*56-1) karetka.positionRow++; }
+
+
+                if(event.isControlDown()) buffer.EndPosition=(karetka.positionRow-1)*56+karetka.positionColumn-1;
 
                 //System.out.println(key);
                 int j=0,k=1;
@@ -106,8 +173,33 @@ public class Main extends Application {
                             document.remove(i-3);
                         }
                     j++;  k=1; ;}
+                    if((buffer.StartPosition<=i && i<=buffer.EndPosition && event.isControlDown()) || (buffer.StartPosition>=i && i>=buffer.EndPosition && event.isControlDown())) gr.setFill(Color.BLUE); else gr.setFill(Color.BLACK);
                     gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
                 }
+
+
+                if(event.isControlDown() && key.equals(KeyCode.C.toString())) {
+                    System.out.println(buffer.StartPosition);
+                    System.out.println(buffer.EndPosition);
+                    buffer.Content.clear();
+
+                    if (buffer.EndPosition > buffer.StartPosition)
+                        for (int i = buffer.StartPosition; i <= buffer.EndPosition; i++){
+                            buffer.Content.add(document.get(i));
+                            //System.out.println(document.get(i).SymbolToRepresent);
+                        }
+
+                    if (buffer.EndPosition < buffer.StartPosition)
+                        for (int i = buffer.EndPosition; i <= buffer.StartPosition; i++) {
+                            buffer.Content.add(document.get(i));
+                            //System.out.println(document.get(i).SymbolToRepresent);
+                        }
+                }
+
+                if(event.isControlDown() && key.equals(KeyCode.V.toString()))
+                    for(int i=0;i<buffer.Content.size();i++)
+                        document.add((karetka.positionRow-1)*56+karetka.positionColumn-1,buffer.Content.get(buffer.Content.size()-i-1));
+
 
                 gr.fillText("_",karetka.positionColumn*7,karetka.positionRow*10);
 
@@ -125,25 +217,29 @@ public class Main extends Application {
                 textpane.setLayoutY(25);
 
                 textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-                Group group =new Group(textpane,FontComboBox,FontFamilyLabel);
+                Group group =new Group(textpane,FontComboBox,FontFamilyLabel,FontSizeComboBox,Boldbutton,ItalicButton);
                 Scene scene = new Scene(group);
                 primaryStage.setScene(scene);
 
             }
         });
 
-
+//----------------------------------------------------------------------------------------------------------------------
         primaryStage.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 Canvas canvas = new Canvas(410,800);
                 GraphicsContext gr=canvas.getGraphicsContext2D();
-                Font CurrentFont=new Font(FontComboBox.getValue(),12);
+                Font CurrentFont=new Font(FontComboBox.getValue(),FontSizeComboBox.getValue());
 
-                CurrentFont.font(FontComboBox.getValue(),FontWeight.BOLD, FontPosture.REGULAR,12);
+                if(Boldbutton.isSelected() && ItalicButton.isSelected()) CurrentFont=CurrentFont.font(FontComboBox.getValue(),FontWeight.BOLD,FontPosture.ITALIC,FontSizeComboBox.getValue());
+                if(!Boldbutton.isSelected() && ItalicButton.isSelected()) CurrentFont=CurrentFont.font(FontComboBox.getValue(),FontWeight.NORMAL,FontPosture.ITALIC,FontSizeComboBox.getValue());
+                if(Boldbutton.isSelected() && !ItalicButton.isSelected()) CurrentFont=CurrentFont.font(FontComboBox.getValue(),FontWeight.BOLD,FontPosture.REGULAR,FontSizeComboBox.getValue());
+                if(!Boldbutton.isSelected() && !ItalicButton.isSelected()) CurrentFont=CurrentFont.font(FontComboBox.getValue(),FontWeight.NORMAL,FontPosture.REGULAR,FontSizeComboBox.getValue());
+
 
                 String key = event.getCharacter() ;
-                if(!key.toString().equals("\b")) {
+                if(!key.toString().equals("\b") && !event.isControlDown()) {
                     Symbol KeySymbol=new Symbol(key.toString(),CurrentFont);
                     document.add(karetka.positionColumn-1+(karetka.positionRow-1)*56,KeySymbol);
                     if(karetka.positionColumn<56) karetka.positionColumn++;
@@ -160,6 +256,8 @@ public class Main extends Application {
                     }
                 gr.fillText("_",karetka.positionColumn*7,karetka.positionRow*10);
 
+
+
                 ScrollPane scrollPane = new ScrollPane(canvas);
                 scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
                 scrollPane.setPrefViewportHeight(500);
@@ -169,31 +267,21 @@ public class Main extends Application {
 
 
                 StackPane textpane = new StackPane(scrollPane);
-               // StackPane textpane = new StackPane(canvas);
 
-//                textpane.setMaxSize(400,500);
-//                textpane.setPrefSize(400,500);
-//                textpane.setMinSize(400,500);
                 textpane.setLayoutX(50);
                 textpane.setLayoutY(25);
 
                 textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-                Group group =new Group(textpane,FontComboBox,FontFamilyLabel);
+                Group group =new Group(textpane,FontComboBox,FontFamilyLabel,FontSizeComboBox,Boldbutton,ItalicButton);
                 Scene scene = new Scene(group);
                 primaryStage.setScene(scene);
 
             }
         });
 
-
+//----------------------------------------------------------------------------------------------------------------------
         Canvas canvas = new Canvas(410,800);
         GraphicsContext gr=canvas.getGraphicsContext2D();
-//        int j=0,k=1;
-//        for(int i=0;i<document.size();i++,k++) {
-//            gr.setFont(document.get(i).SymbolFont);
-//            if(document.get(i).SymbolToRepresent.equals("\n")) {j++; k=-1; }
-//            gr.fillText(document.get(i).SymbolToRepresent, k * 7, (j+1)*10);
-//        }
 
         ScrollPane scrollPane = new ScrollPane(canvas);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -208,7 +296,7 @@ public class Main extends Application {
         textpane.setLayoutY(25);
 
         textpane.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderWidths.DEFAULT)));
-        Group group =new Group(textpane,FontComboBox,FontFamilyLabel);
+        Group group =new Group(textpane,FontComboBox,FontFamilyLabel,FontSizeComboBox,Boldbutton,ItalicButton);
         Scene scene = new Scene(group);
         primaryStage.setScene(scene);
         primaryStage.setWidth(800);
